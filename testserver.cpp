@@ -10,6 +10,7 @@ int main(int argc, char* argv[]){
 
 	std::string message = client.Read();
 	std::cout << "Client said: " << message << std::endl;
+	client.Write("Hello back!");
 
 	client.Close();
 	testsock.Close();
