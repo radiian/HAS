@@ -9,17 +9,17 @@
 
 
 Sock::Sock(sock_type _type, std::string address, int port){
-	sock_addr.sin_family = AF_INET;
-	sock_addr.sin_port = htons(port);
-	inet_pton(AF_INET, address.c_str(), &sock_addr.sin_addr.s_addr);
-	mode = 1;
-	type = _type;
-	if(type == udp){
-		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	this->sock_addr.sin_family = AF_INET;
+	this->sock_addr.sin_port = htons(port);
+	inet_pton(AF_INET, address.c_str(), &this->sock_addr.sin_addr.s_addr);
+	this->mode = 1;
+	this->type = _type;
+	if(this->type == udp){
+		this->sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	}
 	else{
-		if(type == tcp){
-			sockfd = socket(AF_INET, SOCK_STREAM, 0);
+		if(this->type == tcp){
+			this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
 		}
 	}
 }
@@ -28,28 +28,84 @@ Sock::Sock(sock_type _type, std::string address, int port){
 
 
 Sock::Sock(sock_type _type, int port){
-	sock_addr.sin_family = AF_INET;
-	sock_addr.sin_port = htons(port);
-	sock_addr.sin_addr.s_addr = INADDR_ANY;
-	mode = 0;
-	type = _type;
-	if(type == udp){
-		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	this->sock_addr.sin_family = AF_INET;
+	this->sock_addr.sin_port = htons(port);
+	this->sock_addr.sin_addr.s_addr = INADDR_ANY;
+	this->mode = 0;
+	this->type = _type;
+	if(this->type == udp){
+		this->sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	}
 	else{
-		if(type == tcp){
-			sockfd = socket(AF_INET, SOCK_STREAM, 0);
+		if(this->type == tcp){
+			this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
 		}
 	}
 }
 
+
+Sock::Sock(sock_type _type){
+	this->type = _type;
+}
+
 void Sock::Bind(){
-	if(bind(sockfd, (struct sockaddr *)&sock_addr, sizeof(sock_addr)) < 0)
+
+	if(bind(this->sockfd, (struct sockaddr *)&this->sock_addr, sizeof(this->sock_addr)) < 0)
 	{
-		lasterror = errno;
+		std::cout << "Error on bind" << std::endl;
+		this->lasterror = errno;
 	}
 }
 
 void Sock::Listen(int backlog){
-	listen(sockfd, backlog);
+	listen(this->sockfd, backlog);
+}
+
+void Sock::Connect(){
+	if(connect(this->sockfd, (struct sockaddr *)&this->sock_addr, sizeof(this->sock_addr))< 0){
+		std::cout << "Error on connect" << std::endl;
+		this->lasterror = errno;
+	}
+}
+
+Sock Sock::Accept(){
+	Sock tmp = Sock(this->type);
+	socklen_t socklength = sizeof(tmp.sock_addr);
+	tmp.sockfd = accept(this->sockfd, (struct sockaddr *) &tmp.sock_addr, &socklength);
+	if(tmp.sockfd < 0){
+		std::cout << "Error on accept" << std::endl;
+		std::cout << errno << std::endl;
+		this->lasterror = errno;
+	}
+	return tmp;
+}
+
+std::string Sock::Read(){
+	char buff[256];
+	for(int i = 0; i < 255; ++i)buff[i] = 0;
+	if(read(this->sockfd, buff, 255) < 0){
+		this->lasterror = errno;
+		return "";
+	}
+	std::string tmp = "";
+	int i = 0;
+	char c = buff[i];
+	while(c != '\0' | i < 255){
+		tmp += c;
+		c = buff[++i];
+	}
+	return tmp;
+
+}
+
+void Sock::Write(std::string writedata){
+	if(write(this->sockfd, writedata.c_str(), writedata.length()) < 0){
+		this->lasterror = errno;
+	}
+
+}
+
+void Sock::Close(){
+	close(this->sockfd);
+
 }
