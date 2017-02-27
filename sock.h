@@ -8,6 +8,7 @@
 #include <netinet/ip.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <errno.h>
 
 enum sock_type{
 	tcp,
@@ -15,13 +16,13 @@ enum sock_type{
 
 class Sock{
 	public:
-	int sockfd = 0;//File descriptor for the socket
-	int lasterror = 0;//The last error the socket returned
-	int port = 0;//The port to connect to or listen on
-	int mode = 0;//Socket mode. 0 = server, 1 = client;
-	int connected = 0;//0 = connected, 1 = disconnected
-	int maxConnections = 10;//Max connections for server to handle
-	std::string ip_address = "";//The IP address to connect to or liston on
+	int sockfd;// = 0;//File descriptor for the socket
+	int lasterror;// = 0;//The last error the socket returned
+	int port;// = 0;//The port to connect to or listen on
+	int mode;// = 0;//Socket mode. 0 = server, 1 = client;
+	int connected;// = 0;//0 = connected, 1 = disconnected
+	int maxConnections;// = 10;//Max connections for server to handle
+	std::string ip_address;// = "";//The IP address to connect to or liston on
 	sock_type type;//Type of socket to create. tcp or udp
 	struct sockaddr_in sock_addr;//The address struct for the socket
 	

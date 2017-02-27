@@ -22,6 +22,8 @@ Sock::Sock(sock_type _type, std::string address, int port){
 			this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
 		}
 	}
+	int iSetOption = 1;
+	setsockopt(this->sockfd, SOL_SOCKET, SO_REUSEADDR,(char*) &iSetOption, sizeof(iSetOption));
 }
 
 
@@ -41,6 +43,11 @@ Sock::Sock(sock_type _type, int port){
 			this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
 		}
 	}
+
+
+	int iSetOption = 1;
+	setsockopt(this->sockfd, SOL_SOCKET, SO_REUSEADDR,(char*) &iSetOption, sizeof(iSetOption));
+
 }
 
 
@@ -87,13 +94,7 @@ std::string Sock::Read(){
 		this->lasterror = errno;
 		return "";
 	}
-	std::string tmp = "";
-	int i = 0;
-	char c = buff[i];
-	while(c != '\0' | i < 255){
-		tmp += c;
-		c = buff[++i];
-	}
+	std::string tmp = std::string(buff);
 	return tmp;
 
 }
