@@ -1,4 +1,4 @@
-#include "sock.h"
+#include "../src/sock.h"
 
 int main(int argc, char* argv[]){
 	std::cout << "Test!" << std::endl;

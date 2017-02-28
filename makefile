@@ -1,12 +1,13 @@
 default: sock.cpp sock.h
-	g++ sock.cpp -c -o sock.o
+	cd src; \
+	g++ sock.cpp -c -o ../bin/sock.o
 
 demo: testserver.cpp testclient.cpp
 	make default
-	g++ testclient.cpp sock.o -o client
-	g++ testserver.cpp sock.o -o server
+	g++ testclient.cpp bin/sock.o -o client
+	g++ testserver.cpp bin/sock.o -o server
 
 clean:
-	rm sock.o
+	rm bin/sock.o
 	rm client
 	rm server
