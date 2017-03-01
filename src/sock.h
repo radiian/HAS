@@ -10,9 +10,22 @@
 #include <arpa/inet.h>
 #include <errno.h>
 
+
 enum sock_type{
 	tcp,
 	udp};
+
+struct SNoAccept: public std::exception{
+   const char* what() const throw(){
+	  return "Socket timed out on accept";
+   }
+};
+
+struct SError: public std::exception{
+   const char* what() const throw(){
+	  return "A socket error has occurred";
+   }
+};
 
 class Sock{
 	public:

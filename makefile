@@ -1,4 +1,4 @@
-default: sock.cpp sock.h
+default: src/sock.cpp src/sock.h
 	cd src; \
 	g++ sock.cpp -c -o ../bin/sock.o
 

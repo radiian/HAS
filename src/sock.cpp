@@ -80,9 +80,8 @@ Sock Sock::Accept(){
 	socklen_t socklength = sizeof(tmp.sock_addr);
 	tmp.sockfd = accept(this->sockfd, (struct sockaddr *) &tmp.sock_addr, &socklength);
 	if(tmp.sockfd < 0){
-		std::cout << "Error on accept" << std::endl;
-		std::cout << errno << std::endl;
 		this->lasterror = errno;
+		throw SNoAccept();
 	}
 	return tmp;
 }
